@@ -29,17 +29,20 @@ func main() {
 	userRepository := user.NewRepository(db)
 	userService := user.NewService(userRepository)
 
-	input := user.LoginInput{
-		Email:    "postmann@email.com",
-		Password: "postmanpassword",
+	input := user.CheckEmailInput{
+		Email: "postmann@email.com",
 	}
-	user, err := userService.Login(input)
+	isAvailable, err := userService.IsEmailAvailable(input)
 	if err != nil {
 		fmt.Println("Something failed")
 		fmt.Println(err.Error())
 	}
-	fmt.Println(user.Email)
-	fmt.Println(user.Name)
+
+	if isAvailable {
+		fmt.Println("Email available")
+	} else {
+		fmt.Println("Email Unavailable")
+	}
 
 	userHandler := handler.NewUserHandler(userService)
 
@@ -49,6 +52,7 @@ func main() {
 
 	api.POST("/users", userHandler.RegisterUser)
 	api.POST("/sessions", userHandler.Login)
+	api.POST("/email_checkers", userHandler.CheckEmailAvailability)
 
 	router.Run()
 }
