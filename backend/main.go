@@ -29,19 +29,11 @@ func main() {
 	userRepository := user.NewRepository(db)
 	userService := user.NewService(userRepository)
 
-	input := user.CheckEmailInput{
-		Email: "postmann@email.com",
-	}
-	isAvailable, err := userService.IsEmailAvailable(input)
+	user, err := userService.SaveAvatar(6, "images/1-profile.png")
 	if err != nil {
-		fmt.Println("Something failed")
-		fmt.Println(err.Error())
-	}
-
-	if isAvailable {
-		fmt.Println("Email available")
+		fmt.Println(err)
 	} else {
-		fmt.Println("Email Unavailable")
+		fmt.Println(user.AvatarFileName)
 	}
 
 	userHandler := handler.NewUserHandler(userService)
@@ -53,6 +45,7 @@ func main() {
 	api.POST("/users", userHandler.RegisterUser)
 	api.POST("/sessions", userHandler.Login)
 	api.POST("/email_checkers", userHandler.CheckEmailAvailability)
+	api.POST("/avatars", userHandler.UploadAvatar)
 
 	router.Run()
 }
