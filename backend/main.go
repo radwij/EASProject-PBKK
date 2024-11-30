@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crowdfund_be/auth"
 	"crowdfund_be/handler"
 	"crowdfund_be/user"
 	"fmt"
@@ -28,15 +29,23 @@ func main() {
 
 	userRepository := user.NewRepository(db)
 	userService := user.NewService(userRepository)
+	authService := auth.NewService()
 
-	user, err := userService.SaveAvatar(6, "images/1-profile.png")
+	fmt.Println(authService.GenerateToken(2))
+
+	token, err := authService.ValidateToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyfQ.34Et8DRJO2f3rP_cws-YqF7SXi2vHkeIu5-Qc3Kl5lA")
 	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println(user.AvatarFileName)
+		fmt.Println("---------------------Error")
 	}
 
-	userHandler := handler.NewUserHandler(userService)
+	if token.Valid {
+		fmt.Println("---------------------Valid")
+		fmt.Println(token)
+	} else {
+		fmt.Println("---------------------Error")
+	}
+
+	userHandler := handler.NewUserHandler(userService, authService)
 
 	router := gin.Default()
 
