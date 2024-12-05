@@ -2,6 +2,7 @@ package main
 
 import (
 	"crowdfund_be/auth"
+	"crowdfund_be/campaign"
 	"crowdfund_be/handler"
 	"crowdfund_be/helper"
 	"crowdfund_be/user"
@@ -25,17 +26,28 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	err = db.AutoMigrate(&user.User{})
+	err = db.AutoMigrate(&user.User{}, &campaign.Campaign{}, &campaign.CampaignImage{})
 
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
 	userRepository := user.NewRepository(db)
+	campaignRepository := campaign.NewRepository(db)
+
 	userService := user.NewService(userRepository)
 	authService := auth.NewService()
 
 	userHandler := handler.NewUserHandler(userService, authService)
+
+	campaigns, _ := campaignRepository.FindByUserID(1)
+	fmt.Println("------------------------------------")
+	fmt.Println(len(campaigns))
+	for _, campaign := range campaigns {
+		fmt.Println(campaign.Name)
+		fmt.Println(campaign.CampaignImages[0].FileName)
+	}
+	fmt.Println("------------------------------------")
 
 	router := gin.Default()
 
