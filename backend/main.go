@@ -5,8 +5,8 @@ import (
 	"crowdfund_be/campaign"
 	"crowdfund_be/handler"
 	"crowdfund_be/helper"
+	"crowdfund_be/transaction"
 	"crowdfund_be/user"
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -26,7 +26,7 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	err = db.AutoMigrate(&user.User{}, &campaign.Campaign{}, &campaign.CampaignImage{})
+	err = db.AutoMigrate(&user.User{}, &campaign.Campaign{}, &campaign.CampaignImage{}, &transaction.Transaction{})
 
 	if err != nil {
 		log.Fatal(err.Error())
@@ -34,27 +34,16 @@ func main() {
 
 	userRepository := user.NewRepository(db)
 	campaignRepository := campaign.NewRepository(db)
+	transactionRepository := transaction.NewRepository(db)
 
 	userService := user.NewService(userRepository)
 	authService := auth.NewService()
 	campaignService := campaign.NewService(campaignRepository)
+	transactionService := transaction.NewService(transactionRepository, campaignRepository)
 
 	userHandler := handler.NewUserHandler(userService, authService)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
-
-	// input := campaign.CreateCampaignInput{}
-	// input.Name = "Butuh dana weeeeeee"
-	// input.ShortDescription = "short boi"
-	// input.Description = "Long boiiiiiiiiiiiiiiiiiiiiiiiiii"
-	// input.GoalAmount = 100000
-	// input.Perks = "perk satu;perk dua;perk tiga"
-	// inputUser, _ := userService.GetUserByID(3)
-	// input.User = inputUser
-
-	// _, err = campaignService.CreateCampaign(input)
-	// if err != nil {
-	// 	log.Fatal(err.Error())
-	// }
+	transactionHandler := handler.NewTransactionHandler(transactionService)
 
 	router := gin.Default()
 	router.Static("/images", "./images")
@@ -64,13 +53,15 @@ func main() {
 	api.POST("/sessions", userHandler.Login)
 	api.POST("/email_checkers", userHandler.CheckEmailAvailability)
 	api.POST("/avatars", authMiddleware(authService, userService), userHandler.UploadAvatar)
+
 	api.POST("/campaigns", authMiddleware(authService, userService), campaignHandler.CreateCampaign)
 	api.POST("/campaign-images", authMiddleware(authService, userService), campaignHandler.UploadImage)
-
 	api.GET("/campaigns", campaignHandler.GetCampaigns)
 	api.GET("/campaigns/:id", campaignHandler.GetCampaign)
-
 	api.PUT("/campaigns/:id", authMiddleware(authService, userService), campaignHandler.UpdateCampaign)
+
+	api.GET("/campaigns/:id/transactions", authMiddleware(authService, userService), transactionHandler.GetCampaignTransactions)
+	api.GET("/transactions", authMiddleware(authService, userService), transactionHandler.GetUserTransactions)
 
 	router.Run()
 }
@@ -90,7 +81,7 @@ func authMiddleware(authService auth.Service, userService user.Service) gin.Hand
 			tokenString = tokenArray[1]
 		}
 
-		fmt.Println("------------------------" + tokenString)
+		// fmt.Println("------------------------" + tokenString)
 
 		token, err := authService.ValidateToken(tokenString)
 		if err != nil {
