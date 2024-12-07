@@ -42,10 +42,19 @@ func main() {
 	userHandler := handler.NewUserHandler(userService, authService)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
 
-	campaigns, _ := campaignService.GetCampaigns(3)
-	fmt.Println("------------------------------------")
-	fmt.Println(len(campaigns))
-	fmt.Println("------------------------------------")
+	input := campaign.CreateCampaignInput{}
+	input.Name = "Butuh dana weeeeeee"
+	input.ShortDescription = "short boi"
+	input.Description = "Long boiiiiiiiiiiiiiiiiiiiiiiiiii"
+	input.GoalAmount = 100000
+	input.Perks = "perk satu;perk dua;perk tiga"
+	inputUser, _ := userService.GetUserByID(3)
+	input.User = inputUser
+
+	_, err = campaignService.CreateCampaign(input)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 
 	router := gin.Default()
 	router.Static("/images", "./images")
@@ -55,6 +64,7 @@ func main() {
 	api.POST("/sessions", userHandler.Login)
 	api.POST("/email_checkers", userHandler.CheckEmailAvailability)
 	api.POST("/avatars", authMiddleware(authService, userService), userHandler.UploadAvatar)
+	api.POST("/campaigns", authMiddleware(authService, userService), campaignHandler.CreateCampaign)
 
 	api.GET("/campaigns", campaignHandler.GetCampaigns)
 	api.GET("/campaigns/:id", campaignHandler.GetCampaign)
