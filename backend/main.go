@@ -42,19 +42,19 @@ func main() {
 	userHandler := handler.NewUserHandler(userService, authService)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
 
-	input := campaign.CreateCampaignInput{}
-	input.Name = "Butuh dana weeeeeee"
-	input.ShortDescription = "short boi"
-	input.Description = "Long boiiiiiiiiiiiiiiiiiiiiiiiiii"
-	input.GoalAmount = 100000
-	input.Perks = "perk satu;perk dua;perk tiga"
-	inputUser, _ := userService.GetUserByID(3)
-	input.User = inputUser
+	// input := campaign.CreateCampaignInput{}
+	// input.Name = "Butuh dana weeeeeee"
+	// input.ShortDescription = "short boi"
+	// input.Description = "Long boiiiiiiiiiiiiiiiiiiiiiiiiii"
+	// input.GoalAmount = 100000
+	// input.Perks = "perk satu;perk dua;perk tiga"
+	// inputUser, _ := userService.GetUserByID(3)
+	// input.User = inputUser
 
-	_, err = campaignService.CreateCampaign(input)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+	// _, err = campaignService.CreateCampaign(input)
+	// if err != nil {
+	// 	log.Fatal(err.Error())
+	// }
 
 	router := gin.Default()
 	router.Static("/images", "./images")
@@ -68,6 +68,8 @@ func main() {
 
 	api.GET("/campaigns", campaignHandler.GetCampaigns)
 	api.GET("/campaigns/:id", campaignHandler.GetCampaign)
+
+	api.PUT("/campaigns/:id", authMiddleware(authService, userService), campaignHandler.UpdateCampaign)
 
 	router.Run()
 }
