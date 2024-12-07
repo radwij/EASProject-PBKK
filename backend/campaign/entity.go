@@ -1,6 +1,7 @@
 package campaign
 
 import (
+	"crowdfund_be/user"
 	"time"
 
 	"gorm.io/gorm"
@@ -21,6 +22,7 @@ type Campaign struct {
 	UpdatedAt        time.Time
 	DeletedAt        gorm.DeletedAt
 	CampaignImages   []CampaignImage `gorm:"foreignKey:CampaignID;constraint:OnDelete:CASCADE;"`
+	User             user.User
 }
 
 type CampaignImage struct {
