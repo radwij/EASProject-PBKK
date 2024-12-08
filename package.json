@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "axios": "^1.7.9",
+    "mdb-vue-ui-kit": "^6.0.0",
+    "vue-router": "^4.5.0"
+  }
+}
