@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Campaign</title>
+</head>
+<body>
+    <h1>Edit Campaign</h1>
+    <form id="editCampaignForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="short_description">Short Description:</label>
+        <input type="text" id="short_description" name="short_description" required><br><br>
+
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" required></textarea><br><br>
+
+        <label for="goal_amount">Goal Amount:</label>
+        <input type="number" id="goal_amount" name="goal_amount" required><br><br>
+
+        <label for="perks">Perks:</label>
+        <input type="text" id="perks" name="perks" required><br><br>
+
+        <button type="submit">Update Campaign</button>
+    </form>
+
+    <div id="resultContainer"></div>
+
+    <script src="editCampaign.js"></script>
+</body>
+</html>

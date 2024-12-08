@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Campaigns</title>
+    <style>
+        /* Simple styles for the campaign boxes */
+        .campaign-box {
+            border: 1px solid #ccc;
+            padding: 16px;
+            margin: 16px 0;
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+        }
+
+        .campaign-box img {
+            width: 100%;
+            height: auto;
+            margin-bottom: 8px;
+        }
+
+        .campaign-box h3 {
+            font-size: 20px;
+            margin: 8px 0;
+        }
+
+        .campaign-box p {
+            font-size: 14px;
+            color: #666;
+            margin: 8px 0;
+        }
+
+        .campaign-box .goal {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .campaign-box .status {
+            margin-top: 10px;
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <h1>My Campaigns</h1>
+    
+    <div id="campaignsContainer"></div>
+
+    <div class="back-to-homepage">
+        <button id="backToHomepage">Back to Homepage</button>
+    </div>
+
+    <script src="myCampaign.js"></script>
+</body>
+</html>

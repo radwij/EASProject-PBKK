@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Campaigns</title>
+    <style>
+        /* Add some basic styling for the campaign boxes */
+        .campaign-box {
+            border: 1px solid #ccc;
+            padding: 16px;
+            margin: 10px;
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+            background-color: #f9f9f9;
+        }
+        .campaign-box img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        .campaign-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+        .campaign-box h3 {
+            margin: 10px 0;
+        }
+        .campaign-box p {
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>All Campaigns</h1>
+
+    <!-- List of campaign boxes will appear here -->
+    <div class="campaign-list" id="campaignList"></div>
+
+    <!-- Back to Homepage Button -->
+    <button class="back-button" id="backToHomepage">Back to Homepage</button>
+
+    <script src="showAllCampaign.js"></script>
+</body>
+</html>

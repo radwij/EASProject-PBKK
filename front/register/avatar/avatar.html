@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Profile Picture</title>
+</head>
+<body>
+    <h1>Upload Profile Picture</h1>
+    
+    <form id="avatarForm">
+        <label for="avatar">Choose Profile Picture:</label><br>
+        <input type="file" id="avatar" name="avatar" accept="image/*" required><br><br>
+        <button type="submit">Upload</button>
+    </form>
+
+    <h3>Response:</h3>
+    <pre id="responseOutput"></pre>
+
+    <!-- Back to Homepage Button (initially hidden) -->
+    <button id="backToHomepage">Back to Homepage</button>
+
+    <script src="avatar.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Campaign</title>
+</head>
+<body>
+    <h1>Create New Campaign</h1>
+    
+    <form id="createCampaignForm">
+        <label for="name">Campaign Name:</label><br>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="short_description">Short Description:</label><br>
+        <input type="text" id="short_description" name="short_description" required><br><br>
+
+        <label for="description">Description:</label><br>
+        <textarea id="description" name="description" required></textarea><br><br>
+
+        <label for="goal_amount">Goal Amount:</label><br>
+        <input type="number" id="goal_amount" name="goal_amount" required><br><br>
+
+        <label for="perks">Perks (separate with semicolons):</label><br>
+        <input type="text" id="perks" name="perks" required><br><br>
+
+        <button type="submit">Create Campaign</button>
+    </form>
+
+    <h3>Response:</h3>
+    <div id="resultContainer"></div>
+
+    <script src="createCampaign.js"></script>
+</body>
+</html>
