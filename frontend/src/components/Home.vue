@@ -12,71 +12,96 @@
       </div>
     </section>
 
-    <!-- Projects Section -->
-    <section ref="projectsSection" class="projects-section">
-      <div class="section-header">
-        <h2>Ongoing Projects</h2>
-        <p>Explore and support amazing initiatives</p>
-      </div>
+     <!-- Projects Section -->
+  <section ref="projectsSection" class="projects-section">
+    <div class="section-header">
+      <h2>Ongoing Campaigns</h2>
+      <p>Explore and support amazing initiatives</p>
+    </div>
 
-      <div class="projects-grid">
-        <div v-for="project in projects" :key="project.id" class="project-card">
-          <img :src="project.coverImage" :alt="project.title" class="project-image">
-          <div class="project-details">
-            <h3>{{ project.title }}</h3>
-            <p>{{ project.description }}</p>
-            <div class="project-progress">
-              <div 
-                class="progress-bar"
-                :style="{ width: `${calculateProgressPercentage(project)}%` }"
-              ></div>
-              <div class="progress-info">
-                <span>{{ calculateProgressPercentage(project) }}%</span>
-                <span>Rp {{ formatCurrency(project.currentAmount) }} / Rp {{ formatCurrency(project.goalAmount) }}</span>
-              </div>
-            </div>
-            <div class="project-actions">
-              <button @click="viewProjectDetails(project.id)">View Details</button>
-              <button @click="supportProject(project.id)">Support Project</button>
-            </div>
+    <div class="projects-grid">
+      <div v-for="campaign in projects" :key="campaign.id" class="project-card">
+        <img :src="campaign.coverImage" :alt="campaign.name" class="project-image" />
+        <div class="project-details">
+          <h3>{{ campaign.name }}</h3>
+          <p>{{ campaign.shortDescription }}</p>
+          <p><strong>Perks:</strong> {{ campaign.perks }}</p>
+          <p><strong>Backers:</strong> {{ campaign.backerCount }}</p>
+          <p><strong>Goal:</strong> Rp {{ formatCurrency(campaign.goalAmount) }}</p>
+          <p><strong>Current:</strong> Rp {{ formatCurrency(campaign.currentAmount) }}</p>
+
+          <!-- Progress Bar -->
+          <div class="project-progress">
+            <div :style="{ width: calculateProgressPercentage(campaign) + '%' }" class="progress-bar"></div>
+          </div>
+
+          <div class="project-actions">
+            <button @click="viewProjectDetails(campaign.id)">View Details</button>
+            <button @click="supportProject(campaign.id)">Support Project</button>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Infinite Scroll Trigger -->
-      <div 
-        v-if="hasMoreProjects && !isLoading"
-        ref="scrollTrigger"
-        class="scroll-trigger"
-      >
-        Loading more projects...
-      </div>
-    </section>
+    <!-- Infinite Scroll Trigger -->
+    <div v-if="hasMoreProjects && !isLoading" ref="scrollTrigger" class="scroll-trigger">
+      Loading more campaigns...
+    </div>
+  </section>
 </template>
 
 <script>
 import axios from "axios";
 
 export default {
-  name: "LandingPage",
   data() {
     return {
-      projects: [],
+      projects: [],       // Campaign yang ditampilkan
       page: 1,
       hasMoreProjects: true,
       isLoading: false,
-      observer: null,
+      observer: null
     };
   },
-  mounted() {
+
+  async mounted() {
+    await this.fetchProjects();
     this.setupScrollObserver();
   },
+
   methods: {
+    async fetchProjects() {
+      if (this.isLoading) return;
+
+      this.isLoading = true;
+
+      try {
+        const response = await axios.get('/api/campaigns');
+
+        if (response.data && response.data.campaigns) {
+          const fetchedProjects = response.data.campaigns;
+
+          if (fetchedProjects.length === 0) {
+            this.hasMoreProjects = false;
+            return;
+          }
+
+          // Menggabungkan campaign yang sudah ada dengan yang baru, hanya menampilkan 5 campaign pertama
+          this.projects = [...this.projects, ...fetchedProjects.slice(0, 5)];
+          this.page++;
+        }
+      } catch (error) {
+        console.error("Failed to fetch ongoing campaigns:", error);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
     setupScrollObserver() {
       const options = {
         root: null,
         rootMargin: "0px",
-        threshold: 0.1,
+        threshold: 0.1
       };
 
       this.observer = new IntersectionObserver((entries) => {
@@ -91,46 +116,33 @@ export default {
         this.observer.observe(this.$refs.scrollTrigger);
       }
     },
-    async fetchProjects() {
-      if (this.isLoading) return;
 
-      this.isLoading = true;
-      try {
-        const response = await axios.get(`/api/projects?page=${this.page}`);
-
-        if (response.data.projects.length === 0) {
-          this.hasMoreProjects = false;
-        } else {
-          this.projects = [...this.projects, ...response.data.projects];
-          this.page++;
-        }
-      } catch (error) {
-        console.error("Error fetching projects:", error);
-      } finally {
-        this.isLoading = false;
-      }
-    },
     createNewProject() {
-      this.$router.push("/projects/create");
+      this.$router.push('/projects/create');
     },
+
     viewProjectDetails(projectId) {
       this.$router.push(`/projects/${projectId}`);
     },
+
     supportProject(projectId) {
       this.$router.push(`/projects/${projectId}/support`);
     },
-    calculateProgressPercentage(project) {
-      return Math.round((project.currentAmount / project.goalAmount) * 100);
+
+    calculateProgressPercentage(campaign) {
+      return Math.round((campaign.currentAmount / campaign.goalAmount) * 100);
     },
+
     formatCurrency(amount) {
-      return new Intl.NumberFormat("id-ID").format(amount);
-    },
+      return new Intl.NumberFormat('id-ID').format(amount);
+    }
   },
+
   beforeUnmount() {
     if (this.observer) {
       this.observer.disconnect();
     }
-  },
+  }
 };
 </script>
 
