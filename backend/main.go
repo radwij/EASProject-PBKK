@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -47,7 +48,13 @@ func main() {
 	transactionHandler := handler.NewTransactionHandler(transactionService)
 
 	router := gin.Default()
-	router.Use(cors.Default())
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://127.0.0.1:5500"}, // Update with the correct frontend URL
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"}, // Allow Authorization header
+		AllowCredentials: true,                                                // Allow credentials (cookies, authorization headers, etc.)
+		MaxAge:           12 * time.Hour,                                      // Cache preflight response for 12 hours
+	}))
 	router.Static("/images", "./images")
 	api := router.Group("api/v1")
 
